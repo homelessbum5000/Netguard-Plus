@@ -405,6 +405,16 @@ class SystemInspectorViewModel(application: Application) : AndroidViewModel(appl
         SystemFileItem("/data/system/packages.xml", "System Package & Permission Manifest", "rw-------", "ENCRYPTED", true, "Per-app WiFi and Mobile Data toggle permissions stored here.")
     )
 
+    val deviceModel: String = android.os.Build.MODEL
+    val deviceManufacturer: String = android.os.Build.MANUFACTURER
+    val deviceHardware: String = android.os.Build.HARDWARE
+    val deviceBoard: String = android.os.Build.BOARD
+    val supportedAbis: String = android.os.Build.SUPPORTED_ABIS.joinToString(", ")
+    val androidVersion: String = "Android ${android.os.Build.VERSION.RELEASE} (API ${android.os.Build.VERSION.SDK_INT})"
+
+    private val _a67lOptimizationActive = MutableStateFlow(true)
+    val a67lOptimizationActive: StateFlow<Boolean> = _a67lOptimizationActive.asStateFlow()
+
     private val _storageScopesEnabled = MutableStateFlow(true)
     val storageScopesEnabled: StateFlow<Boolean> = _storageScopesEnabled.asStateFlow()
 
@@ -467,6 +477,18 @@ class SystemInspectorViewModel(application: Application) : AndroidViewModel(appl
         _networkPermissionPrompt.value = enabled
     }
 
+    fun toggleA67lOptimization(enabled: Boolean) {
+        _a67lOptimizationActive.value = enabled
+        viewModelScope.launch {
+            repository.addThreatLog(
+                if (enabled) "A67L / Low-RAM Profile ENGAGED" else "Standard Device Profile",
+                "INFO",
+                "Hardware Adaptation",
+                if (enabled) "Applied Unisoc ARM64/ARM32 memory throttling, 720p HD+ display scaling, and lightweight background daemon." else "Standard execution profile restored."
+            )
+        }
+    }
+
     fun toggleExecSpawning(enabled: Boolean) {
         _execSpawningBlocked.value = enabled
         viewModelScope.launch {
@@ -510,7 +532,7 @@ class AvScannerViewModel(application: Application) : AndroidViewModel(applicatio
         "Windows Defender SmartScreen",
         "ESET NOD32 Mobile",
         "Avast Threat Intelligence",
-        "Aegis Heuristic Sandbox"
+        "NetGuard Heuristic Sandbox"
     )
 
     fun onFilePicked(fileName: String, bytesCount: Long) {

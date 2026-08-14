@@ -405,7 +405,7 @@ private fun ShieldStatusHero(
 
                 Column {
                     Text(
-                        text = if (isProtected) "Aegis OS Shield" else "Protection Paused",
+                        text = if (isProtected) "NetGuard Plus" else "Protection Paused",
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.Light,
                             fontFamily = FontFamily.Serif
@@ -413,7 +413,7 @@ private fun ShieldStatusHero(
                         color = CyberTextPrimary
                     )
                     Text(
-                        text = if (isProtected) "GrapheneGuard, DNSCrypt & AV Active" else "Network firewall & Pi-hole DNS disabled",
+                        text = if (isProtected) "NetGuard Firewall, DNSCrypt & AV Active" else "Network firewall & Pi-hole DNS disabled",
                         style = MaterialTheme.typography.bodySmall,
                         color = CyberTextSecondary
                     )

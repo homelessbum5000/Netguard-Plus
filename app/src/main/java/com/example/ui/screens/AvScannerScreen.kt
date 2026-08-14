@@ -128,7 +128,7 @@ fun AvScannerScreen(
                     ) {
                         Column {
                             Text(
-                                text = "Aegis AV Scanner",
+                                text = "NetGuard AV Scanner",
                                 style = MaterialTheme.typography.headlineSmall.copy(
                                     fontWeight = FontWeight.Light,
                                     fontFamily = FontFamily.Serif

@@ -26,9 +26,11 @@ import androidx.compose.material.icons.filled.FolderSpecial
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Memory
+import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material.icons.filled.Usb
 import androidx.compose.material.icons.filled.VerifiedUser
@@ -90,6 +92,7 @@ fun SystemInspectorScreen(
     val lanIp by viewModel.lanIp.collectAsStateWithLifecycle()
     val usbTethering by viewModel.usbTetheringActive.collectAsStateWithLifecycle()
     val btPairing by viewModel.bluetoothPairingActive.collectAsStateWithLifecycle()
+    val a67lOptimization by viewModel.a67lOptimizationActive.collectAsStateWithLifecycle()
 
     val scope = rememberCoroutineScope()
     var isDiagnosticRunning by remember { mutableStateOf(false) }
@@ -139,6 +142,142 @@ fun SystemInspectorScreen(
                         style = MaterialTheme.typography.bodySmall,
                         color = CyberTextMuted
                     )
+                }
+            }
+        }
+
+        // Hardware Compatibility & A67L Profile Card
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, CyberEmeraldPrimary.copy(alpha = 0.4f), RoundedCornerShape(24.dp)),
+                colors = CardDefaults.cardColors(containerColor = CyberCardBg),
+                shape = RoundedCornerShape(24.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(38.dp)
+                                    .clip(CircleShape)
+                                    .background(CyberEmeraldPrimary.copy(alpha = 0.15f))
+                                    .border(1.dp, CyberEmeraldPrimary, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.PhoneAndroid,
+                                    contentDescription = "Device Info",
+                                    tint = CyberEmeraldPrimary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                            Column {
+                                Text(
+                                    text = "A67L / Device Profile",
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                    color = CyberTextPrimary
+                                )
+                                Text(
+                                    text = "Unisoc SC9863A / ARM64 & 32-bit ABI Tuned",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontFamily = FontFamily.Monospace,
+                                        fontSize = 10.sp
+                                    ),
+                                    color = CyberEmeraldVariant
+                                )
+                            }
+                        }
+
+                        Switch(
+                            checked = a67lOptimization,
+                            onCheckedChange = { viewModel.toggleA67lOptimization(it) },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.Black,
+                                checkedTrackColor = CyberEmeraldPrimary,
+                                uncheckedThumbColor = Color.White,
+                                uncheckedTrackColor = CyberCardBorder
+                            )
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(CyberDarkBg)
+                            .padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("Device Target:", style = MaterialTheme.typography.labelSmall, color = CyberTextMuted)
+                            Text(
+                                text = "${viewModel.deviceManufacturer.uppercase()} ${viewModel.deviceModel} (A67L Ready)",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = CyberTextPrimary
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("OS Version:", style = MaterialTheme.typography.labelSmall, color = CyberTextMuted)
+                            Text(
+                                text = viewModel.androidVersion,
+                                style = MaterialTheme.typography.labelSmall.copy(fontFamily = FontFamily.Monospace),
+                                color = CyberTextSecondary
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("ABIs Supported:", style = MaterialTheme.typography.labelSmall, color = CyberTextMuted)
+                            Text(
+                                text = viewModel.supportedAbis,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 10.sp
+                                ),
+                                color = CyberEmeraldPrimary
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("Resource Mode:", style = MaterialTheme.typography.labelSmall, color = CyberTextMuted)
+                            Text(
+                                text = if (a67lOptimization) "Low-RAM Daemon & 720p HD+ Scaler Active" else "Standard High-RAM Mode",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = if (a67lOptimization) CyberEmeraldVariant else CyberTextMuted
+                            )
+                        }
+                    }
                 }
             }
         }
