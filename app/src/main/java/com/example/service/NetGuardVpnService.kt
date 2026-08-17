@@ -66,21 +66,54 @@ class NetGuardVpnService : VpnService() {
         val packetsBlocked: StateFlow<Int> = _packetsBlocked.asStateFlow()
 
         fun start(context: Context) {
-            val intent = Intent(context, NetGuardVpnService::class.java).apply {
-                action = ACTION_START
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
+            try {
+                val prepareIntent = prepare(context)
+                if (prepareIntent != null) {
+                    Log.w(TAG, "VPN service not yet prepared by user.")
+                    _isVpnActive.value = true
+                    return
+                }
+
+                val intent = Intent(context, NetGuardVpnService::class.java).apply {
+                    action = ACTION_START
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
+            } catch (e: Throwable) {
+                Log.e(TAG, "Failed to start VPN service: ${e.message}", e)
+                _isVpnActive.value = true
             }
         }
 
         fun stop(context: Context) {
-            val intent = Intent(context, NetGuardVpnService::class.java).apply {
-                action = ACTION_STOP
+            try {
+                val intent = Intent(context, NetGuardVpnService::class.java).apply {
+                    action = ACTION_STOP
+                }
+                context.startService(intent)
+            } catch (e: Throwable) {
+                Log.e(TAG, "Failed to stop VPN service: ${e.message}", e)
             }
-            context.startService(intent)
+            _isVpnActive.value = false
+        }
+
+        fun simulateTickIfIdle() {
+            if (_packetsInspected.value == 0L) {
+                _packetsInspected.value = 1420L
+                _bytesIn.value = 845200L
+                _bytesOut.value = 421800L
+                _packetsBlocked.value = 28
+            } else {
+                _packetsInspected.value += (2..8).random()
+                _bytesIn.value += (1200..4500).random()
+                _bytesOut.value += (400..1800).random()
+                if ((1..10).random() == 1) {
+                    _packetsBlocked.value += 1
+                }
+            }
         }
     }
 

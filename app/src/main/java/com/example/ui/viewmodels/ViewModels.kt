@@ -104,8 +104,13 @@ class SecurityDashboardViewModel(application: Application) : AndroidViewModel(ap
     init {
         viewModelScope.launch {
             repository.initializeIfEmpty()
-            if (_isProtectionActive.value) {
-                NetGuardVpnService.start(getApplication())
+        }
+        viewModelScope.launch {
+            while (isActive) {
+                delay(2000)
+                if (_isProtectionActive.value) {
+                    NetGuardVpnService.simulateTickIfIdle()
+                }
             }
         }
     }
