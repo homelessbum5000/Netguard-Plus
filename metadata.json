@@ -1,7 +1,0 @@
-{
-  "name": "NetGuard Plus",
-  "description": "Lightweight per-app firewall with Wi-Fi & Mobile data controls, GrapheneOS privacy hardening, VPN & Always-On proxy, DNSCrypt, and multi-engine AV scanner.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
-

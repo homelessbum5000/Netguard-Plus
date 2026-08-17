@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.data.SystemFileItem
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -652,7 +653,7 @@ private fun SecuritySettingToggleCard(
 }
 
 @Composable
-private fun SystemFileCard(file: SystemInspectorViewModel.SystemFileItem) {
+private fun SystemFileCard(file: SystemFileItem) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

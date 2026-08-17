@@ -186,7 +186,7 @@ fun DashboardScreen(
         // 35% AI Security CPU Allocation Engine Card
         item {
             AiCpuAllocationCard(
-                aiAllocation = aiAllocation,
+                aiAllocation = aiAllocation.toFloat(),
                 aiStatus = aiStatus,
                 isProtected = isProtected,
                 bytesIn = bytesIn,
