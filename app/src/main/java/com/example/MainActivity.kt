@@ -58,6 +58,7 @@ import com.example.ui.screens.AppFirewallScreen
 import com.example.ui.screens.AvScannerScreen
 import com.example.ui.screens.DashboardScreen
 import com.example.ui.screens.PiHoleScreen
+import com.example.ui.screens.SecurityAuditScreen
 import com.example.ui.screens.SystemInspectorScreen
 import com.example.ui.theme.CyberCardBg
 import com.example.ui.theme.CyberCardBorder
@@ -84,6 +85,7 @@ enum class NavigationTab(
     AV_SCANNER("AV Scan", Icons.Filled.BugReport, Icons.Outlined.BugReport, "nav_tab_av_scan"),
     FIREWALL("Firewall", Icons.Filled.Lock, Icons.Outlined.Lock, "nav_tab_firewall"),
     PIHOLE("Pi-Hole", Icons.Filled.Dns, Icons.Outlined.Dns, "nav_tab_pihole"),
+    SECURITY_AUDIT("Audit", Icons.Filled.Security, Icons.Outlined.Security, "nav_tab_security_audit"),
     SYSTEM("System", Icons.Filled.Terminal, Icons.Outlined.Terminal, "nav_tab_system")
 }
 
@@ -165,6 +167,7 @@ class MainActivity : ComponentActivity() {
                                 NavigationTab.AV_SCANNER -> AvScannerScreen(viewModel = avScannerViewModel)
                                 NavigationTab.FIREWALL -> AppFirewallScreen(viewModel = firewallViewModel)
                                 NavigationTab.PIHOLE -> PiHoleScreen(viewModel = piHoleViewModel)
+                                NavigationTab.SECURITY_AUDIT -> SecurityAuditScreen(viewModel = firewallViewModel)
                                 NavigationTab.SYSTEM -> SystemInspectorScreen(viewModel = systemViewModel)
                             }
                         }

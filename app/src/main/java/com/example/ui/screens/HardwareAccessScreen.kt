@@ -1,6 +1,5 @@
 package com.example.ui.screens
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,33 +13,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.CellTower
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Bluetooth
+import androidx.compose.material.icons.filled.BluetoothDisabled
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MobileOff
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SignalCellular4Bar
-import androidx.compose.material.icons.filled.SignalCellularOff
-import androidx.compose.material.icons.filled.SignalWifi4Bar
-import androidx.compose.material.icons.filled.SignalWifiOff
-import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -65,7 +56,6 @@ import com.example.ui.theme.CyberCardBg
 import com.example.ui.theme.CyberCardBorder
 import com.example.ui.theme.CyberDarkBg
 import com.example.ui.theme.CyberEmeraldPrimary
-import com.example.ui.theme.CyberEmeraldVariant
 import com.example.ui.theme.CyberPrimaryCyan
 import com.example.ui.theme.CyberSecondaryEmerald
 import com.example.ui.theme.CyberTextMuted
@@ -75,7 +65,7 @@ import com.example.ui.theme.CyberWarningAmber
 import com.example.ui.viewmodels.NetworkFirewallViewModel
 
 @Composable
-fun AppFirewallScreen(
+fun HardwareAccessScreen(
     viewModel: NetworkFirewallViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -106,7 +96,7 @@ fun AppFirewallScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "App Network Rules",
+                        text = "Hardware Access Controls",
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.Light,
                             fontFamily = FontFamily.Serif
@@ -114,7 +104,7 @@ fun AppFirewallScreen(
                         color = CyberTextPrimary
                     )
                     Text(
-                        text = "PER-APP FIREWALL CONTROLS",
+                        text = "GRAPHENEOS PERMISSION SANDBOX",
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.2.sp
@@ -123,63 +113,9 @@ fun AppFirewallScreen(
                     )
 
                     Text(
-                        text = "Toggle Wi-Fi and Mobile Data independently for every installed app, including low-level GrapheneOS system components.",
+                        text = "Revoke or grant hardware permissions (Bluetooth, Camera, Microphone) per application. Policy rules are immediately persisted and enforced at the kernel sandbox layer.",
                         style = MaterialTheme.typography.bodySmall,
                         color = CyberTextMuted
-                    )
-                }
-            }
-        }
-
-        // Global Kill Switch Card
-        item {
-            val globalKillSwitch by viewModel.globalKillSwitchEnabled.collectAsStateWithLifecycle()
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, if (globalKillSwitch) CyberAlertRed else CyberCardBorder, RoundedCornerShape(20.dp)),
-                colors = CardDefaults.cardColors(containerColor = CyberCardBg),
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Icon(
-                                imageVector = Icons.Default.Block,
-                                contentDescription = "Kill Switch",
-                                tint = if (globalKillSwitch) CyberAlertRed else CyberTextSecondary,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Text(
-                                text = "Global Network Kill Switch",
-                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                color = CyberTextPrimary
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Instantly terminates all unencrypted internet traffic if VPN or proxy connection drops.",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = CyberTextMuted
-                        )
-                    }
-
-                    Switch(
-                        checked = globalKillSwitch,
-                        onCheckedChange = { viewModel.toggleGlobalKillSwitch(it) },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.Black,
-                            checkedTrackColor = CyberAlertRed,
-                            uncheckedThumbColor = Color.White,
-                            uncheckedTrackColor = CyberCardBorder
-                        ),
-                        modifier = Modifier.testTag("global_kill_switch_toggle")
                     )
                 }
             }
@@ -192,10 +128,10 @@ fun AppFirewallScreen(
                 onValueChange = { viewModel.searchQuery.value = it },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .testTag("app_firewall_search_input"),
+                    .testTag("hardware_access_search_input"),
                 placeholder = {
                     Text(
-                        "Search app label or package (e.g. android.systemui)",
+                        "Search app label or package",
                         color = CyberTextMuted,
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -220,37 +156,36 @@ fun AppFirewallScreen(
             )
         }
 
-
-        // Filter Chips Bar
+        // Filter Chips
         item {
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 item {
-                    AppFilterChip(
+                    HardwareFilterChip(
                         label = "All Apps",
                         selected = selectedFilter == "ALL",
                         onClick = { viewModel.selectedFilter.value = "ALL" }
                     )
                 }
                 item {
-                    AppFilterChip(
+                    HardwareFilterChip(
                         label = "User Apps",
                         selected = selectedFilter == "USER",
                         onClick = { viewModel.selectedFilter.value = "USER" }
                     )
                 }
                 item {
-                    AppFilterChip(
+                    HardwareFilterChip(
                         label = "System Apps",
                         selected = selectedFilter == "SYSTEM",
                         onClick = { viewModel.selectedFilter.value = "SYSTEM" }
                     )
                 }
                 item {
-                    AppFilterChip(
-                        label = "Blocked Apps",
+                    HardwareFilterChip(
+                        label = "Sandboxed",
                         selected = selectedFilter == "BLOCKED",
                         onClick = { viewModel.selectedFilter.value = "BLOCKED" }
                     )
@@ -258,54 +193,43 @@ fun AppFirewallScreen(
             }
         }
 
-        // Quick Batch Actions
+        // Batch Control Buttons
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                BatchActionButton(
-                    text = "Disable All WiFi",
-                    onClick = { viewModel.setAllWifiState(enabled = false) },
+                HardwareBatchButton(
+                    text = "Disable Camera All",
+                    onClick = { viewModel.setAllCameraBlocked(true) },
                     modifier = Modifier.weight(1f)
                 )
-                BatchActionButton(
-                    text = "Disable All Mobile",
-                    onClick = { viewModel.setAllMobileDataState(enabled = false) },
+                HardwareBatchButton(
+                    text = "Disable Mic All",
+                    onClick = { viewModel.setAllMicrophoneBlocked(true) },
                     modifier = Modifier.weight(1f)
                 )
-                BatchActionButton(
-                    text = "Block System Mobile",
-                    onClick = { viewModel.setAllMobileDataState(enabled = false, forSystemOnly = true) },
+                HardwareBatchButton(
+                    text = "Disable BT All",
+                    onClick = { viewModel.setAllBluetoothBlocked(true) },
                     modifier = Modifier.weight(1f)
                 )
             }
         }
 
-        // App List Count Label
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "CONFIGURED APPLICATIONS (${appRules.size})",
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    ),
-                    color = CyberPrimaryCyan
-                )
-            }
-        }
-
-        // App Rules Cards
+        // Installed App Rules Cards with Individual Toggles
         items(appRules, key = { it.packageName }) { rule ->
-            AppNetworkRuleCard(
+            HardwareAppCard(
                 rule = rule,
-                onToggleWifi = { enabled -> viewModel.toggleWifi(rule, enabled) },
-                onToggleMobile = { enabled -> viewModel.toggleMobileData(rule, enabled) }
+                onToggleBluetooth = { isGranted ->
+                    viewModel.toggleBluetooth(rule, blocked = !isGranted)
+                },
+                onToggleCamera = { isGranted ->
+                    viewModel.toggleCamera(rule, blocked = !isGranted)
+                },
+                onToggleMicrophone = { isGranted ->
+                    viewModel.toggleMicrophone(rule, blocked = !isGranted)
+                }
             )
         }
 
@@ -314,7 +238,7 @@ fun AppFirewallScreen(
 }
 
 @Composable
-private fun AppFilterChip(
+private fun HardwareFilterChip(
     label: String,
     selected: Boolean,
     onClick: () -> Unit
@@ -329,7 +253,7 @@ private fun AppFilterChip(
             )
         },
         colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = CyberPrimaryCyan,
+            selectedContainerColor = CyberEmeraldPrimary,
             selectedLabelColor = Color.Black,
             containerColor = CyberCardBg,
             labelColor = CyberTextSecondary
@@ -338,14 +262,14 @@ private fun AppFilterChip(
             enabled = true,
             selected = selected,
             borderColor = CyberCardBorder,
-            selectedBorderColor = CyberPrimaryCyan
+            selectedBorderColor = CyberEmeraldPrimary
         ),
         shape = RoundedCornerShape(20.dp)
     )
 }
 
 @Composable
-private fun BatchActionButton(
+private fun HardwareBatchButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -356,49 +280,54 @@ private fun BatchActionButton(
             .background(CyberCardBg)
             .border(1.dp, CyberCardBorder, RoundedCornerShape(10.dp))
             .clickable { onClick() }
-            .padding(vertical = 10.dp, horizontal = 12.dp),
+            .padding(vertical = 10.dp, horizontal = 8.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall.copy(
                 fontWeight = FontWeight.Bold,
-                fontSize = 11.sp
+                fontSize = 10.sp
             ),
-            color = CyberPrimaryCyan
+            color = CyberEmeraldPrimary,
+            maxLines = 1
         )
     }
 }
 
 @Composable
-private fun AppNetworkRuleCard(
+private fun HardwareAppCard(
     rule: AppNetworkRuleEntity,
-    onToggleWifi: (Boolean) -> Unit,
-    onToggleMobile: (Boolean) -> Unit
+    onToggleBluetooth: (Boolean) -> Unit,
+    onToggleCamera: (Boolean) -> Unit,
+    onToggleMicrophone: (Boolean) -> Unit
 ) {
-    val networkStatusText = when {
-        rule.wifiAllowed && rule.mobileDataAllowed -> "Full Network Access"
-        rule.wifiAllowed && !rule.mobileDataAllowed -> "Wi-Fi Only (Mobile Blocked)"
-        !rule.wifiAllowed && rule.mobileDataAllowed -> "Mobile Data Only (Wi-Fi Blocked)"
-        else -> "ISOLATED (ALL NETWORK BLOCKED)"
+    val isBtGranted = !rule.bluetoothBlocked
+    val isCamGranted = !rule.cameraBlocked
+    val isMicGranted = !rule.microphoneBlocked
+
+    val statusText = when {
+        !isBtGranted && !isCamGranted && !isMicGranted -> "ALL HARDWARE PERMISSIONS REVOKED (SANDBOXED)"
+        !isBtGranted || !isCamGranted || !isMicGranted -> "PARTIAL HARDWARE RESTRICTION APPLIED"
+        else -> "FULL HARDWARE ACCESS ALLOWED"
     }
 
-    val networkStatusColor = when {
-        rule.wifiAllowed && rule.mobileDataAllowed -> CyberSecondaryEmerald
-        !rule.wifiAllowed && !rule.mobileDataAllowed -> CyberAlertRed
-        else -> CyberWarningAmber
+    val statusColor = when {
+        !isBtGranted && !isCamGranted && !isMicGranted -> CyberAlertRed
+        !isBtGranted || !isCamGranted || !isMicGranted -> CyberWarningAmber
+        else -> CyberSecondaryEmerald
     }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, CyberCardBorder, RoundedCornerShape(12.dp)),
+            .border(1.dp, CyberCardBorder, RoundedCornerShape(16.dp)),
         colors = CardDefaults.cardColors(containerColor = CyberCardBg),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(
-            modifier = Modifier.padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -427,7 +356,10 @@ private fun AppNetworkRuleCard(
                     }
 
                     Column(modifier = Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
                             Text(
                                 text = rule.appName,
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
@@ -462,92 +394,107 @@ private fun AppNetworkRuleCard(
                 }
             }
 
-            // Network Status Bar & Toggles Row
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(10.dp))
                     .background(CyberDarkBg)
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(vertical = 2.dp)
             ) {
-                // Wifi Control Switch Button
-                NetworkToggleButton(
-                    label = "Wi-Fi",
-                    isEnabled = rule.wifiAllowed,
-                    activeIcon = Icons.Default.SignalWifi4Bar,
-                    inactiveIcon = Icons.Default.SignalWifiOff,
-                    onToggle = onToggleWifi,
-                    testTag = "wifi_toggle_${rule.packageName}"
+                // Bluetooth Toggle Row
+                HardwareToggleItem(
+                    label = "Bluetooth Access",
+                    isGranted = isBtGranted,
+                    activeIcon = Icons.Default.Bluetooth,
+                    inactiveIcon = Icons.Default.BluetoothDisabled,
+                    onToggle = onToggleBluetooth,
+                    testTag = "bluetooth_toggle_${rule.packageName}"
                 )
 
-                Box(
-                    modifier = Modifier
-                        .width(1.dp)
-                        .height(24.dp)
-                        .background(CyberCardBorder)
+                Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(CyberCardBorder))
+
+                // Camera Toggle Row
+                HardwareToggleItem(
+                    label = "Camera Access",
+                    isGranted = isCamGranted,
+                    activeIcon = Icons.Default.CameraAlt,
+                    inactiveIcon = Icons.Default.VideocamOff,
+                    onToggle = onToggleCamera,
+                    testTag = "camera_toggle_${rule.packageName}"
                 )
 
-                // Mobile Data Control Switch Button
-                NetworkToggleButton(
-                    label = "Mobile",
-                    isEnabled = rule.mobileDataAllowed,
-                    activeIcon = Icons.Default.SignalCellular4Bar,
-                    inactiveIcon = Icons.Default.SignalCellularOff,
-                    onToggle = onToggleMobile,
-                    testTag = "mobile_toggle_${rule.packageName}"
+                Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(CyberCardBorder))
+
+                // Microphone Toggle Row
+                HardwareToggleItem(
+                    label = "Microphone Access",
+                    isGranted = isMicGranted,
+                    activeIcon = Icons.Default.Mic,
+                    inactiveIcon = Icons.Default.MicOff,
+                    onToggle = onToggleMicrophone,
+                    testTag = "mic_toggle_${rule.packageName}"
                 )
             }
 
             Text(
-                text = networkStatusText,
+                text = statusText,
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Monospace,
                     fontSize = 10.sp
                 ),
-                color = networkStatusColor
+                color = statusColor
             )
         }
     }
 }
 
 @Composable
-private fun NetworkToggleButton(
+private fun HardwareToggleItem(
     label: String,
-    isEnabled: Boolean,
+    isGranted: Boolean,
     activeIcon: androidx.compose.ui.graphics.vector.ImageVector,
     inactiveIcon: androidx.compose.ui.graphics.vector.ImageVector,
     onToggle: (Boolean) -> Unit,
     testTag: String
 ) {
-    val activeColor = if (isEnabled) CyberSecondaryEmerald else CyberAlertRed
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .clickable { onToggle(!isEnabled) }
+            .fillMaxWidth()
+            .clickable { onToggle(!isGranted) }
             .testTag(testTag)
-            .padding(vertical = 4.dp, horizontal = 6.dp)
+            .padding(vertical = 8.dp, horizontal = 12.dp)
     ) {
-        Icon(
-            imageVector = if (isEnabled) activeIcon else inactiveIcon,
-            contentDescription = label,
-            tint = activeColor,
-            modifier = Modifier.size(20.dp)
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(
+                imageVector = if (isGranted) activeIcon else inactiveIcon,
+                contentDescription = label,
+                tint = if (isGranted) CyberSecondaryEmerald else CyberAlertRed,
+                modifier = Modifier.size(20.dp)
+            )
 
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-            color = CyberTextPrimary
-        )
+            Column {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                    color = CyberTextPrimary
+                )
+                Text(
+                    text = if (isGranted) "Permission Granted" else "Permission Revoked",
+                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+                    color = if (isGranted) CyberSecondaryEmerald else CyberAlertRed
+                )
+            }
+        }
 
         Switch(
-            checked = isEnabled,
-            onCheckedChange = onToggle,
+            checked = isGranted,
+            onCheckedChange = { onToggle(it) },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.Black,
                 checkedTrackColor = CyberSecondaryEmerald,

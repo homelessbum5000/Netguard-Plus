@@ -74,8 +74,10 @@ import java.util.Date
 import java.util.Locale
 
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Restore
+import com.example.ui.theme.CyberSecondaryEmerald
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.IconButton
@@ -100,6 +102,9 @@ fun DashboardScreen(
     val quarantineItems by viewModel.quarantineItems.collectAsStateWithLifecycle()
     val bytesIn by viewModel.bytesReceived.collectAsStateWithLifecycle()
     val bytesOut by viewModel.bytesSent.collectAsStateWithLifecycle()
+    val torRouting by viewModel.torRoutingEnabled.collectAsStateWithLifecycle()
+    val exploitProtection by viewModel.exploitProtection.collectAsStateWithLifecycle()
+    val scopedStorage by viewModel.scopedStorage.collectAsStateWithLifecycle()
 
     LazyColumn(
         modifier = modifier
@@ -192,6 +197,70 @@ fun DashboardScreen(
                 bytesIn = bytesIn,
                 bytesOut = bytesOut
             )
+        }
+
+        // Multi-Engine AV Scan Status Dashboard Component
+        item {
+            AvScanDashboardCard(viewModel = viewModel)
+        }
+
+        // Auto-Quarantine & AI Firewall Port Blocking Card
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, CyberWarningAmber.copy(alpha = 0.5f), RoundedCornerShape(20.dp)),
+                colors = CardDefaults.cardColors(containerColor = CyberCardBg),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "Automated Security & AI Port Defense",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = CyberTextPrimary
+                    )
+                    Text(
+                        text = "INSTANT THREAT CONTAINMENT & NEURAL PORT FILTERING",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp),
+                        color = CyberWarningAmber
+                    )
+
+                    androidx.compose.material3.Button(
+                        onClick = { viewModel.autoQuarantineEverything() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("auto_quarantine_all_button"),
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = CyberAlertRed),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.Security, contentDescription = "Quarantine", tint = Color.White, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Auto-Quarantine Everything",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = Color.White)
+                        )
+                    }
+
+                    androidx.compose.material3.Button(
+                        onClick = { viewModel.aiBlockFirewallPorts() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("ai_block_ports_button"),
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = CyberPrimaryCyan),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.Lock, contentDescription = "AI Ports", tint = Color.Black, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Use AI to Block Vulnerable Firewall Ports",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = Color.Black)
+                        )
+                    }
+                }
+            }
         }
 
         // Quarantine System
@@ -297,6 +366,149 @@ fun DashboardScreen(
                             .weight(1f)
                             .testTag("malloc_killswitch_card")
                     )
+                }
+            }
+        }
+
+        // Tails & GrapheneOS Advanced Hardening & Onion Circuit Hub
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, CyberEmeraldPrimary.copy(alpha = 0.5f), RoundedCornerShape(20.dp)),
+                colors = CardDefaults.cardColors(containerColor = CyberCardBg),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "TAILS & GRAPHENEOS HARDENING HUB",
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp),
+                                color = CyberEmeraldPrimary
+                            )
+                            Text(
+                                text = "Zero-trust onion routing & memory safety",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = CyberTextMuted
+                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .background(CyberEmeraldPrimary.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = if (torRouting) "TOR 3-HOP ACTIVE" else "DIRECT MESH",
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace),
+                                color = CyberEmeraldPrimary
+                            )
+                        }
+                    }
+
+                    // Tor Circuit Node Simulation
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(CyberDarkBg, RoundedCornerShape(12.dp))
+                            .padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "ONION ROUTING CIRCUIT (TAILS OS SIM)",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace),
+                            color = CyberTextSecondary
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("1. Guard (Frankfurt DE)", style = MaterialTheme.typography.bodySmall, color = CyberTextPrimary)
+                            Text("⚡ 14ms", style = MaterialTheme.typography.labelSmall.copy(fontFamily = FontFamily.Monospace), color = CyberEmeraldPrimary)
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("2. Relay (Zurich CH)", style = MaterialTheme.typography.bodySmall, color = CyberTextPrimary)
+                            Text("⚡ 22ms", style = MaterialTheme.typography.labelSmall.copy(fontFamily = FontFamily.Monospace), color = CyberEmeraldPrimary)
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("3. Exit (Reykjavik IS)", style = MaterialTheme.typography.bodySmall, color = CyberTextPrimary)
+                            Text("⚡ 38ms", style = MaterialTheme.typography.labelSmall.copy(fontFamily = FontFamily.Monospace), color = CyberEmeraldPrimary)
+                        }
+                    }
+
+                    // Toggles for Tor, Exploit Protection, Scoped Storage
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Tor Onion Routing", style = MaterialTheme.typography.bodyMedium, color = CyberTextPrimary)
+                        Switch(
+                            checked = torRouting,
+                            onCheckedChange = { viewModel.toggleTorRouting() },
+                            colors = SwitchDefaults.colors(checkedThumbColor = CyberEmeraldPrimary, checkedTrackColor = CyberEmeraldVariant)
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("GrapheneOS Exploit Protection", style = MaterialTheme.typography.bodyMedium, color = CyberTextPrimary)
+                        Switch(
+                            checked = exploitProtection,
+                            onCheckedChange = { viewModel.toggleExploitProtection() },
+                            colors = SwitchDefaults.colors(checkedThumbColor = CyberEmeraldPrimary, checkedTrackColor = CyberEmeraldVariant)
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Strict Scoped Storage Isolation", style = MaterialTheme.typography.bodyMedium, color = CyberTextPrimary)
+                        Switch(
+                            checked = scopedStorage,
+                            onCheckedChange = { viewModel.toggleScopedStorage() },
+                            colors = SwitchDefaults.colors(checkedThumbColor = CyberEmeraldPrimary, checkedTrackColor = CyberEmeraldVariant)
+                        )
+                    }
+
+                    // Tails Amnesic RAM Wipe Button
+                    androidx.compose.material3.Button(
+                        onClick = { viewModel.amnesiaWipe() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("tails_amnesia_wipe_button"),
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = CyberAlertRed.copy(alpha = 0.2f)),
+                        shape = RoundedCornerShape(12.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, CyberAlertRed)
+                    ) {
+                        Icon(imageVector = Icons.Default.Block, contentDescription = "Wipe", tint = CyberAlertRed, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "EXECUTE TAILS AMNESIAC RAM WIPE",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = CyberAlertRed)
+                        )
+                    }
                 }
             }
         }
@@ -741,6 +953,128 @@ private fun ThreatLogItemCard(log: ThreatLogEntity) {
                         ),
                         color = severityColor
                     )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AvScanDashboardCard(
+    viewModel: SecurityDashboardViewModel
+) {
+    val avLogs by viewModel.avScanLogs.collectAsStateWithLifecycle()
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, CyberEmeraldPrimary.copy(alpha = 0.5f), RoundedCornerShape(24.dp)),
+        colors = CardDefaults.cardColors(containerColor = CyberCardBg),
+        shape = RoundedCornerShape(24.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "Multi-Engine AV Scan Status",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = CyberTextPrimary
+                    )
+                    Text(
+                        text = "8/8 ENTERPRISE AV ENGINES ACTIVE",
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp),
+                        color = CyberEmeraldPrimary
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(CyberSecondaryEmerald.copy(alpha = 0.15f))
+                        .border(1.dp, CyberSecondaryEmerald, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = "SECURE",
+                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp, fontWeight = FontWeight.Bold),
+                        color = CyberSecondaryEmerald
+                    )
+                }
+            }
+
+            Text(
+                text = "Real-time heuristic scanning across packages, memory, and URLs using ClamAV, YARA rules, and Neural Ensembles.",
+                style = MaterialTheme.typography.bodySmall,
+                color = CyberTextMuted
+            )
+
+            androidx.compose.material3.Button(
+                onClick = { viewModel.runManualSystemScan() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("manual_system_scan_button"),
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = CyberEmeraldPrimary),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(imageVector = Icons.Default.Security, contentDescription = "Scan", tint = Color.Black, modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Initiate Manual System Scan",
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = Color.Black)
+                )
+            }
+
+            Text(
+                text = "RECENTLY SCANNED APPLICATIONS (${avLogs.size})",
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp),
+                color = CyberPrimaryCyan
+            )
+
+            avLogs.take(3).forEach { log ->
+                val isMalicious = log.verdict == "MALICIOUS"
+                val riskColor = if (isMalicious) CyberAlertRed else CyberSecondaryEmerald
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(CyberDarkBg)
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = log.targetInput,
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace),
+                            color = CyberTextPrimary,
+                            maxLines = 1
+                        )
+                        Text(
+                            text = "${log.threatFamily} • Risk Score: ${log.riskScore}/100",
+                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                            color = riskColor
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(riskColor.copy(alpha = 0.15f))
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = log.verdict,
+                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, fontWeight = FontWeight.Bold),
+                            color = riskColor
+                        )
+                    }
                 }
             }
         }

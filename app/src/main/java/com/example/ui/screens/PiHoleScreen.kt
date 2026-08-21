@@ -249,6 +249,137 @@ fun PiHoleScreen(
             }
         }
 
+        // Custom DoH / DNSCrypt Server Management Card
+        item {
+            val customDnsInput by viewModel.customDnsInput.collectAsStateWithLifecycle()
+            val customDoHEnabled by viewModel.customDoHEnabled.collectAsStateWithLifecycle()
+            val customServers by viewModel.customDnsServers.collectAsStateWithLifecycle()
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, CyberCardBorder, RoundedCornerShape(24.dp)),
+                colors = CardDefaults.cardColors(containerColor = CyberCardBg),
+                shape = RoundedCornerShape(24.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Custom DoH / DNSCrypt Servers",
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                color = CyberTextPrimary
+                            )
+                            Text(
+                                text = "MANAGE SECURE ENCRYPTED DNS LOOKUPS",
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp),
+                                color = CyberPrimaryCyan
+                            )
+                        }
+
+                        Switch(
+                            checked = customDoHEnabled,
+                            onCheckedChange = { viewModel.toggleCustomDoH(it) },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.Black,
+                                checkedTrackColor = CyberPrimaryCyan,
+                                uncheckedThumbColor = Color.White,
+                                uncheckedTrackColor = CyberCardBorder
+                            ),
+                            modifier = Modifier.testTag("custom_doh_toggle")
+                        )
+                    }
+
+                    Text(
+                        text = "Add and manage custom DNS over HTTPS (DoH) or DNSCrypt servers for zero-knowledge encrypted domain resolution.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = CyberTextMuted
+                    )
+
+                    OutlinedTextField(
+                        value = customDnsInput,
+                        onValueChange = { viewModel.customDnsInput.value = it },
+                        placeholder = { Text("e.g. https://dns.adguard.com/dns-query", color = CyberTextMuted) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("custom_doh_input"),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = CyberDarkBg,
+                            unfocusedContainerColor = CyberDarkBg,
+                            focusedBorderColor = CyberPrimaryCyan,
+                            unfocusedBorderColor = CyberCardBorder,
+                            focusedTextColor = CyberTextPrimary,
+                            unfocusedTextColor = CyberTextPrimary
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true
+                    )
+
+                    Button(
+                        onClick = { viewModel.addCustomDnsServer() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("add_custom_doh_button"),
+                        colors = ButtonDefaults.buttonColors(containerColor = CyberPrimaryCyan),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Icon(imageVector = Icons.Default.Add, contentDescription = "Add", tint = Color.Black, modifier = Modifier.size(16.dp))
+                            Text("Add Custom DoH Server", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = Color.Black)
+                        }
+                    }
+
+                    if (customServers.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "CONFIGURED RESOLVERS (${customServers.size})",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            color = CyberTextSecondary
+                        )
+                        customServers.forEach { server ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(CyberDarkBg)
+                                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = server,
+                                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                                    color = CyberTextPrimary,
+                                    modifier = Modifier.weight(1f),
+                                    maxLines = 1
+                                )
+                                IconButton(
+                                    onClick = { viewModel.removeCustomDnsServer(server) }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Remove",
+                                        tint = CyberAlertRed,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
 
         // Tab Navigation Bar

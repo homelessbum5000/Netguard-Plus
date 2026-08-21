@@ -18,7 +18,7 @@ class AppDatabase private constructor(context: Context) : SQLiteOpenHelper(
     context.applicationContext,
     "netguard_plus.db",
     null,
-    1
+    3
 ) {
     private val dbMutex = Mutex()
 
@@ -41,6 +41,9 @@ class AppDatabase private constructor(context: Context) : SQLiteOpenHelper(
                 isSystemApp INTEGER NOT NULL,
                 wifiAllowed INTEGER NOT NULL,
                 mobileDataAllowed INTEGER NOT NULL,
+                cameraBlocked INTEGER NOT NULL DEFAULT 0,
+                microphoneBlocked INTEGER NOT NULL DEFAULT 0,
+                bluetoothBlocked INTEGER NOT NULL DEFAULT 0,
                 uid INTEGER NOT NULL,
                 bytesTransferred INTEGER NOT NULL,
                 blockedPacketsCount INTEGER NOT NULL
@@ -116,7 +119,7 @@ class AppDatabase private constructor(context: Context) : SQLiteOpenHelper(
     private fun queryAllRules(db: SQLiteDatabase): List<AppNetworkRuleEntity> {
         val list = mutableListOf<AppNetworkRuleEntity>()
         val cursor: Cursor = db.rawQuery(
-            "SELECT packageName, appName, isSystemApp, wifiAllowed, mobileDataAllowed, uid, bytesTransferred, blockedPacketsCount FROM app_network_rules ORDER BY appName ASC",
+            "SELECT packageName, appName, isSystemApp, wifiAllowed, mobileDataAllowed, uid, bytesTransferred, blockedPacketsCount, cameraBlocked, microphoneBlocked, bluetoothBlocked FROM app_network_rules ORDER BY appName ASC",
             null
         )
         cursor.use {
@@ -130,7 +133,10 @@ class AppDatabase private constructor(context: Context) : SQLiteOpenHelper(
                         mobileDataAllowed = it.getInt(4) == 1,
                         uid = it.getInt(5),
                         bytesTransferred = it.getLong(6),
-                        blockedPacketsCount = it.getInt(7)
+                        blockedPacketsCount = it.getInt(7),
+                        cameraBlocked = it.getInt(8) == 1,
+                        microphoneBlocked = it.getInt(9) == 1,
+                        bluetoothBlocked = it.getInt(10) == 1
                     )
                 )
             }
@@ -233,6 +239,9 @@ class AppDatabase private constructor(context: Context) : SQLiteOpenHelper(
                             put("isSystemApp", if (rule.isSystemApp) 1 else 0)
                             put("wifiAllowed", if (rule.wifiAllowed) 1 else 0)
                             put("mobileDataAllowed", if (rule.mobileDataAllowed) 1 else 0)
+                            put("cameraBlocked", if (rule.cameraBlocked) 1 else 0)
+                            put("microphoneBlocked", if (rule.microphoneBlocked) 1 else 0)
+                            put("bluetoothBlocked", if (rule.bluetoothBlocked) 1 else 0)
                             put("uid", rule.uid)
                             put("bytesTransferred", rule.bytesTransferred)
                             put("blockedPacketsCount", rule.blockedPacketsCount)
@@ -300,6 +309,39 @@ class AppDatabase private constructor(context: Context) : SQLiteOpenHelper(
                     put("mobileDataAllowed", if (enabled) 1 else 0)
                 }
                 db.update("app_network_rules", cv, "isSystemApp = 1", null)
+                _appRulesFlow.value = queryAllRules(db)
+            }
+        }
+
+        override suspend fun setAllCameraBlocked(blocked: Boolean) = withContext(Dispatchers.IO) {
+            dbMutex.withLock {
+                val db = writableDatabase
+                val cv = ContentValues().apply {
+                    put("cameraBlocked", if (blocked) 1 else 0)
+                }
+                db.update("app_network_rules", cv, null, null)
+                _appRulesFlow.value = queryAllRules(db)
+            }
+        }
+
+        override suspend fun setAllMicrophoneBlocked(blocked: Boolean) = withContext(Dispatchers.IO) {
+            dbMutex.withLock {
+                val db = writableDatabase
+                val cv = ContentValues().apply {
+                    put("microphoneBlocked", if (blocked) 1 else 0)
+                }
+                db.update("app_network_rules", cv, null, null)
+                _appRulesFlow.value = queryAllRules(db)
+            }
+        }
+
+        override suspend fun setAllBluetoothBlocked(blocked: Boolean) = withContext(Dispatchers.IO) {
+            dbMutex.withLock {
+                val db = writableDatabase
+                val cv = ContentValues().apply {
+                    put("bluetoothBlocked", if (blocked) 1 else 0)
+                }
+                db.update("app_network_rules", cv, null, null)
                 _appRulesFlow.value = queryAllRules(db)
             }
         }

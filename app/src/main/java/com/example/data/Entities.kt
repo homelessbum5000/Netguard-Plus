@@ -6,6 +6,9 @@ data class AppNetworkRuleEntity(
     val isSystemApp: Boolean = false,
     val wifiAllowed: Boolean = true,
     val mobileDataAllowed: Boolean = true,
+    val cameraBlocked: Boolean = false,
+    val microphoneBlocked: Boolean = false,
+    val bluetoothBlocked: Boolean = false,
     val uid: Int = 0,
     val bytesTransferred: Long = 0L,
     val blockedPacketsCount: Int = 0

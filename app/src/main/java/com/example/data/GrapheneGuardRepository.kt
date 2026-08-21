@@ -81,6 +81,18 @@ class GrapheneGuardRepository(
         appRuleDao.updateRule(rule.copy(mobileDataAllowed = enabled))
     }
 
+    suspend fun toggleCamera(rule: AppNetworkRuleEntity, blocked: Boolean) = withContext(Dispatchers.IO) {
+        appRuleDao.updateRule(rule.copy(cameraBlocked = blocked))
+    }
+
+    suspend fun toggleMicrophone(rule: AppNetworkRuleEntity, blocked: Boolean) = withContext(Dispatchers.IO) {
+        appRuleDao.updateRule(rule.copy(microphoneBlocked = blocked))
+    }
+
+    suspend fun toggleBluetooth(rule: AppNetworkRuleEntity, blocked: Boolean) = withContext(Dispatchers.IO) {
+        appRuleDao.updateRule(rule.copy(bluetoothBlocked = blocked))
+    }
+
     suspend fun setAllWifiState(enabled: Boolean, forSystemOnly: Boolean = false) = withContext(Dispatchers.IO) {
         if (forSystemOnly) {
             appRuleDao.setSystemWifiState(enabled)
@@ -95,6 +107,18 @@ class GrapheneGuardRepository(
         } else {
             appRuleDao.setAllMobileDataState(enabled)
         }
+    }
+
+    suspend fun setAllCameraBlocked(blocked: Boolean) = withContext(Dispatchers.IO) {
+        appRuleDao.setAllCameraBlocked(blocked)
+    }
+
+    suspend fun setAllMicrophoneBlocked(blocked: Boolean) = withContext(Dispatchers.IO) {
+        appRuleDao.setAllMicrophoneBlocked(blocked)
+    }
+
+    suspend fun setAllBluetoothBlocked(blocked: Boolean) = withContext(Dispatchers.IO) {
+        appRuleDao.setAllBluetoothBlocked(blocked)
     }
 
     suspend fun addDomainFilter(domain: String, isWhitelist: Boolean, comment: String = "", category: String = "Custom Filter") = withContext(Dispatchers.IO) {

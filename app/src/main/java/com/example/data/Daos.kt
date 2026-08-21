@@ -12,6 +12,9 @@ interface AppNetworkRuleDao {
     suspend fun setSystemWifiState(enabled: Boolean)
     suspend fun setAllMobileDataState(enabled: Boolean)
     suspend fun setSystemMobileDataState(enabled: Boolean)
+    suspend fun setAllCameraBlocked(blocked: Boolean)
+    suspend fun setAllMicrophoneBlocked(blocked: Boolean)
+    suspend fun setAllBluetoothBlocked(blocked: Boolean)
     suspend fun incrementBlockedPackets(packageName: String)
 }
 
